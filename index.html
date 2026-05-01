@@ -1063,14 +1063,25 @@ const qToBlock = {
   q10:4, q11:4, q12:4
 };
 
+// DEBUG LOG — видимий на екрані
+var debugEl = document.createElement('div');
+debugEl.id = 'debugLog';
+debugEl.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-size:11px;padding:8px;z-index:9999;max-height:120px;overflow-y:auto;font-family:monospace';
+document.body.appendChild(debugEl);
+function log(msg) {
+  debugEl.innerHTML = msg + '<br>' + debugEl.innerHTML;
+}
+
 // Повністю без closest() — тільки data атрибути
 document.addEventListener('click', function(e) {
+  log('CLICK: ' + e.target.tagName + ' class=' + e.target.className);
   const btn = e.target;
   if (!btn.classList.contains('rating-btn')) return;
   selectRating(btn);
 });
 
 document.addEventListener('touchend', function(e) {
+  log('TOUCH: ' + e.target.tagName + ' class=' + e.target.className);
   const btn = e.target;
   if (!btn.classList.contains('rating-btn')) return;
   e.preventDefault();
@@ -1080,18 +1091,17 @@ document.addEventListener('touchend', function(e) {
 function selectRating(btn) {
   const q = btn.getAttribute('data-q');
   const val = parseInt(btn.getAttribute('data-val'));
-  if (!q || isNaN(val)) return;
+  log('SELECT q=' + q + ' val=' + val);
+  if (!q || isNaN(val)) { log('SKIP: no q or val'); return; }
 
-  // Save answer
   answers[q] = val;
+  log('answers now: ' + JSON.stringify(answers));
 
-  // Update button styles
   document.querySelectorAll('.rating-btn[data-q="' + q + '"]').forEach(function(b) {
     b.classList.remove('selected');
   });
   btn.classList.add('selected');
 
-  // Mark question card answered — find by data-id
   var questionCard = document.querySelector('.question[data-id="' + q + '"]');
   if (questionCard) questionCard.classList.add('answered');
 
