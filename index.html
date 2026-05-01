@@ -415,9 +415,7 @@
     flex-wrap: wrap;
   }
   .rating-label-min, .rating-label-max {
-    font-size: 11px;
-    color: var(--gray);
-    white-space: nowrap;
+    display: none;
   }
   .rating-buttons {
     display: flex;
@@ -1075,18 +1073,23 @@ function handleRatingSelect(btn, group) {
   updateProgress();
 }
 
-document.querySelectorAll('.rating-buttons').forEach(group => {
-  group.querySelectorAll('.rating-btn').forEach(btn => {
-    // Handle both touch and click for cross-device compatibility
-    btn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      handleRatingSelect(btn, group);
-    }, { passive: false });
-    btn.addEventListener('click', (e) => {
-      handleRatingSelect(btn, group);
-    });
-  });
+// Single delegated listener on document — works reliably on all Android browsers
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.rating-btn');
+  if (!btn) return;
+  const group = btn.closest('.rating-buttons');
+  if (!group) return;
+  handleRatingSelect(btn, group);
 });
+
+document.addEventListener('touchend', function(e) {
+  const btn = e.target.closest('.rating-btn');
+  if (!btn) return;
+  e.preventDefault();
+  const group = btn.closest('.rating-buttons');
+  if (!group) return;
+  handleRatingSelect(btn, group);
+}, { passive: false });
 
 function updateProgress() {
   const done = Object.keys(answers).length;
