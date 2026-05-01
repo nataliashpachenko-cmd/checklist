@@ -1196,7 +1196,7 @@ async function callAI() {
 
 Тон: як розмова з мудрою подругою-терапевтом. Не клінічно, не дидактично. Тепло, чесно, з повагою до людини.
 
-ВАЖЛИВО: Кожна думка має бути повністю завершена. Краще написати менше але цілісно — жодного обірваного речення чи незакінченої думки. Максимум 4-5 абзаців загалом.\`;
+ВАЖЛИВО: Кожна думка має бути повністю завершена. Краще написати менше але цілісно — жодного обірваного речення чи незакінченої думки. Максимум 4-5 абзаців загалом.`;
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -1219,7 +1219,7 @@ async function callAI() {
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
     
-    aiBox.innerHTML = `<div style="line-height:1.85;font-size:15px;font-weight:300;color:#444">${formatted}</div>`;
+    aiBox.innerHTML = '<div style="line-height:1.85;font-size:15px;font-weight:300;color:#444">' + formatted + '</div>';
 
   } catch(e) {
     document.getElementById('aiText').innerHTML = '<span style="color:#999;font-style:italic">Щось пішло не так. Перевір підключення і спробуй знову.</span>';
