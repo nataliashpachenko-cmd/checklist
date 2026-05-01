@@ -216,6 +216,101 @@
     margin-top: 4px;
   }
 
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .hero {
+      padding: 48px 20px 40px;
+    }
+    .hero h1 {
+      font-size: 36px;
+    }
+    .hero-sub {
+      font-size: 13px;
+    }
+    .hero-badge {
+      font-size: 12px;
+      padding: 8px 16px;
+    }
+    .container {
+      padding: 32px 16px 80px;
+    }
+    .intro-card {
+      padding: 24px 20px;
+    }
+    .intro-author {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .scale-legend {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 14px 16px;
+    }
+    .scale-items {
+      gap: 4px;
+    }
+    .scale-item {
+      font-size: 11px;
+      padding: 3px 10px;
+    }
+    .question {
+      padding: 18px 16px;
+    }
+    .question-text {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .rating {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .rating-buttons {
+      gap: 8px;
+    }
+    .rating-btn {
+      width: 44px; height: 44px;
+      font-size: 14px;
+    }
+    .rating-label-min, .rating-label-max {
+      font-size: 10px;
+    }
+    .section-title {
+      font-size: 19px;
+    }
+    .open-question {
+      padding: 20px 16px;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 16px 24px;
+    }
+    .score-grid {
+      grid-template-columns: 1fr;
+    }
+    .ai-box {
+      padding: 24px 20px;
+    }
+    .cta-box {
+      padding: 28px 20px;
+    }
+    .cta-box h3 {
+      font-size: 22px;
+    }
+    .cta-btn {
+      width: 100%;
+      display: block;
+      padding: 16px 24px;
+    }
+    .progress-wrap {
+      padding: 10px 16px;
+    }
+    .result-header h2 {
+      font-size: 28px;
+    }
+  }
+
   /* SCALE LEGEND */
   .scale-legend {
     background: var(--terracotta-pale);
@@ -329,16 +424,19 @@
     gap: 6px;
   }
   .rating-btn {
-    width: 40px; height: 40px;
+    width: 48px; height: 48px;
     border-radius: 50%;
     border: 1.5px solid var(--gray-light);
     background: transparent;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--gray);
     cursor: pointer;
     transition: all 0.18s ease;
     font-family: 'DM Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
   }
   .rating-btn:hover {
     border-color: var(--terracotta);
@@ -967,16 +1065,25 @@ const qToBlock = {
   q10:4, q11:4, q12:4
 };
 
+function handleRatingSelect(btn, group) {
+  const q = group.dataset.q;
+  const val = parseInt(btn.dataset.val);
+  answers[q] = val;
+  group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  group.closest('.question').classList.add('answered');
+  updateProgress();
+}
+
 document.querySelectorAll('.rating-buttons').forEach(group => {
   group.querySelectorAll('.rating-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const q = group.dataset.q;
-      const val = parseInt(btn.dataset.val);
-      answers[q] = val;
-      group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      group.closest('.question').classList.add('answered');
-      updateProgress();
+    // Handle both touch and click for cross-device compatibility
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleRatingSelect(btn, group);
+    }, { passive: false });
+    btn.addEventListener('click', (e) => {
+      handleRatingSelect(btn, group);
     });
   });
 });
