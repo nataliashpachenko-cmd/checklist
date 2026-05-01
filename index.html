@@ -1063,34 +1063,40 @@ const qToBlock = {
   q10:4, q11:4, q12:4
 };
 
-// Delegated listener — reads data-q directly from button, no closest() needed
+// Повністю без closest() — тільки data атрибути
 document.addEventListener('click', function(e) {
   const btn = e.target;
   if (!btn.classList.contains('rating-btn')) return;
-  const q = btn.dataset.q;
-  const val = parseInt(btn.dataset.val);
-  if (!q || !val) return;
-  answers[q] = val;
-  // Deselect all buttons with same data-q
-  document.querySelectorAll('.rating-btn[data-q="' + q + '"]').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  btn.closest('.question').classList.add('answered');
-  updateProgress();
+  selectRating(btn);
 });
 
 document.addEventListener('touchend', function(e) {
   const btn = e.target;
   if (!btn.classList.contains('rating-btn')) return;
   e.preventDefault();
-  const q = btn.dataset.q;
-  const val = parseInt(btn.dataset.val);
-  if (!q || !val) return;
-  answers[q] = val;
-  document.querySelectorAll('.rating-btn[data-q="' + q + '"]').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  btn.closest('.question').classList.add('answered');
-  updateProgress();
+  selectRating(btn);
 }, { passive: false });
+
+function selectRating(btn) {
+  const q = btn.getAttribute('data-q');
+  const val = parseInt(btn.getAttribute('data-val'));
+  if (!q || isNaN(val)) return;
+
+  // Save answer
+  answers[q] = val;
+
+  // Update button styles
+  document.querySelectorAll('.rating-btn[data-q="' + q + '"]').forEach(function(b) {
+    b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+
+  // Mark question card answered — find by data-id
+  var questionCard = document.querySelector('.question[data-id="' + q + '"]');
+  if (questionCard) questionCard.classList.add('answered');
+
+  updateProgress();
+}
 
 function updateProgress() {
   const done = Object.keys(answers).length;
